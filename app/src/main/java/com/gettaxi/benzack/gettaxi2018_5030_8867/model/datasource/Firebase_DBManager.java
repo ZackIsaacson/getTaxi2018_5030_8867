@@ -21,7 +21,7 @@ public class Firebase_DBManager extends AsyncTask<String, Void, Void> implements
     public void addRide(String destinationLocation, String email, String phone) {
         //todo-- calculate current location in string! (get locatiob and convert to string)
         GetCurrentLocation gl = new GetCurrentLocation();
-        String currentLocation = gl.listenForLocation();
+        String currentLocation = gl.getLocation();
 
         HashMap<String, String> hm = new HashMap<String, String>();
         //add current location to firebase

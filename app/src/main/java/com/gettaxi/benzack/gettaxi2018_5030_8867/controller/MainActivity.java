@@ -18,7 +18,6 @@ import com.gettaxi.benzack.gettaxi2018_5030_8867.model.datasource.Firebase_DBMan
 
 public class MainActivity extends Activity implements View.OnClickListener {
 
-    int a;
     EditText editTextDestination;
     EditText editTextEmail;
     EditText editTextPhone;

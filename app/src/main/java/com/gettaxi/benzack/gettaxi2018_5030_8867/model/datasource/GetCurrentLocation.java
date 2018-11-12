@@ -23,11 +23,11 @@ public class GetCurrentLocation extends Activity {
     LocationManager locationManager;
     // Define a listener that responds to location updates
     LocationListener locationListener;
-    String loc;
+    String loc = null;
 
-    public String listenForLocation() {
+    private void listenForLocation() {
 
-        locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         // Define a listener that responds to location updates
 
         locationListener = new LocationListener() {
@@ -54,7 +54,7 @@ public class GetCurrentLocation extends Activity {
             public void onProviderDisabled(String provider) {
             }
         };
-        return loc;
+        // return loc;
     }
 
     //turns Location into string
@@ -79,20 +79,21 @@ public class GetCurrentLocation extends Activity {
         return "IOException ...";
     }
 
-    private void getLocation() {
+    public String getLocation() {
 
         //     Check the SDK version and whether the permission is already granted or not.
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 5);
 
-
-//where its happening. i think calls onLocationChanged
+            //activates the listener
         } else {
             // Android version is lesser than 6.0 or the permission is already granted.
 
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
 
+            return loc;  //if permission granted, return loc. if not return null
         }
-
+        return null;
     }
 }
+
