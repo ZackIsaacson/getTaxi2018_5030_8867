@@ -1,5 +1,6 @@
 package com.gettaxi.benzack.gettaxi2018_5030_8867.model.datasource;
 
+import android.app.Activity;
 import android.os.AsyncTask;
 
 import com.gettaxi.benzack.gettaxi2018_5030_8867.model.backend.Backend;
@@ -13,16 +14,22 @@ import javax.microedition.khronos.opengles.GL;
 
 public class Firebase_DBManager extends AsyncTask<String, Void, Void> implements Backend {
     DatabaseReference fireBaseRoot = FirebaseDatabase.getInstance().getReference("Rides");
-GetCurrentLocation gl=new GetCurrentLocation();
+
 
 
     @Override
-    public void addRide(String destinationLoaction, String email, String phone) {
+    public void addRide(String destinationLocation, String email, String phone) {
         //todo-- calculate current location in string! (get locatiob and convert to string)
+        GetCurrentLocation gl = new GetCurrentLocation();
+        String currentLocation = gl.listenForLocation();
+
         HashMap<String, String> hm = new HashMap<String, String>();
-        //todo-- change method of implemantion. also add current location to firebase
-        hm.put("Destination ", destinationLoaction);
+        //add current location to firebase
+        //todo check why doesnt add two rides. does add one and then bug.
+        hm.put("Destination ", destinationLocation);
+        hm.put("Current Location",currentLocation);
         hm.put("Email ", email);
+
         fireBaseRoot.child(phone).setValue(hm);
 
     }
