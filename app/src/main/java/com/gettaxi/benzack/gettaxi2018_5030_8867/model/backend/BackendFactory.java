@@ -4,7 +4,7 @@ import android.os.AsyncTask;
 
 import com.gettaxi.benzack.gettaxi2018_5030_8867.model.datasource.Firebase_DBManager;
 
-public class BackendFactory{
+public class BackendFactory {
     //check if works
     private static /*final*/ Firebase_DBManager ourInstance;
 
@@ -13,10 +13,10 @@ public class BackendFactory{
     }
 
     public BackendFactory() {
-        if(ourInstance==null)
-            ourInstance=new Firebase_DBManager();
-
-
+        if (ourInstance == null)
+            ourInstance = new Firebase_DBManager();
     }
+
+
 
 }
