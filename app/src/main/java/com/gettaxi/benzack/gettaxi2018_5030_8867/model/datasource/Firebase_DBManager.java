@@ -22,14 +22,14 @@ public class Firebase_DBManager implements Backend {
     public void addRide(String destinationLocation, String email, String phone) {
         //todo-- calculate current location in string! (get location and convert to string)
 
-//        GetCurrentLocation gl = new GetCurrentLocation();
-//        String currentLocation = gl.getLocation();
+        GetCurrentLocation gl = new GetCurrentLocation();
+        String currentLocation = gl.getLocation();
 
         HashMap<String, String> hm = new HashMap<String, String>();
         //add current location to firebase
 
         hm.put("Destination ", destinationLocation);
-//        hm.put("Current Location",currentLocation);
+        hm.put("Current Location",currentLocation);
         hm.put("Email ", email);
 
         fireBaseRoot.child(phone).setValue(hm);
