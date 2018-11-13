@@ -2,6 +2,8 @@ package com.gettaxi.benzack.gettaxi2018_5030_8867.model.datasource;
 
 import android.app.Activity;
 import android.os.AsyncTask;
+import android.os.Handler;
+import android.widget.Toast;
 
 import com.gettaxi.benzack.gettaxi2018_5030_8867.model.backend.Backend;
 import com.google.firebase.database.DatabaseReference;
@@ -20,14 +22,17 @@ public class Firebase_DBManager extends AsyncTask<String, Void, Void> implements
     @Override
     public void addRide(String destinationLocation, String email, String phone) {
         //todo-- calculate current location in string! (get locatiob and convert to string)
-        GetCurrentLocation gl = new GetCurrentLocation();
-        String currentLocation = gl.getLocation();
+
+//        GetCurrentLocation gl = new GetCurrentLocation();
+//        String currentLocation = gl.getLocation();
 
         HashMap<String, String> hm = new HashMap<String, String>();
         //add current location to firebase
         //todo check why doesnt add two rides. does add one and then bug.
+        //todo- checked. the reason it doesnt call twice is that async task cant be called twice from main thread
+//        The task can be executed only once (an exception will be thrown if a second execution is attempted.)
         hm.put("Destination ", destinationLocation);
-        hm.put("Current Location",currentLocation);
+//        hm.put("Current Location",currentLocation);
         hm.put("Email ", email);
 
         fireBaseRoot.child(phone).setValue(hm);

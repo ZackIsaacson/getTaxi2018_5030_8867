@@ -22,7 +22,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
     EditText editTextEmail;
     EditText editTextPhone;
     Button buttonAddRide;
-    BackendFactory b=new BackendFactory();
+    BackendFactory b = new BackendFactory();
     Firebase_DBManager firebase_dbManager;
 
     @Override
@@ -30,7 +30,6 @@ public class MainActivity extends Activity implements View.OnClickListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_ride);
         findViews();
-
 
 
     }
@@ -41,26 +40,28 @@ public class MainActivity extends Activity implements View.OnClickListener {
         editTextPhone = (EditText) findViewById(R.id.editTextPhone);
         buttonAddRide = (Button) findViewById(R.id.buttonAddRide);
         buttonAddRide.setOnClickListener(this);
-        firebase_dbManager=b.getInstance();
+        firebase_dbManager = b.getInstance();
     }
 
     @Override
     public void onClick(View v) {
-      //  if(v== buttonAddRide)
-
+        //  if(v== buttonAddRide)
+        try {
             //execute calls doInBackground (asyncTask) of fireBaseDbManager. which makes the next line asynchrony
             // (meaning will not wait for the line to be completed. the thread will be working in the background. uploading to firebase)
-            firebase_dbManager.execute(editTextDestination.getText().toString(),editTextEmail.getText().toString()
-                    ,editTextPhone.getText().toString());
+            firebase_dbManager.execute(editTextDestination.getText().toString(), editTextEmail.getText().toString()
+                    , editTextPhone.getText().toString());
+        } catch (Exception e) {
+            Toast.makeText(this, e.toString(), Toast.LENGTH_LONG);
+        }
 
 
-
-        Toast t=Toast.makeText(getBaseContext(),"succesfully uploaded to firebase",Toast.LENGTH_LONG);
-        t.setGravity(Gravity.CENTER| Gravity.CENTER,0,0);
+        Toast t = Toast.makeText(getBaseContext(), "succesfully uploaded to firebase", Toast.LENGTH_LONG);
+        t.setGravity(Gravity.CENTER | Gravity.CENTER, 0, 0);
         t.show();
         editTextDestination.setText("");
-            editTextEmail.setText("");
-            editTextPhone.setText("");
+        editTextEmail.setText("");
+        editTextPhone.setText("");
     }
 }
 
