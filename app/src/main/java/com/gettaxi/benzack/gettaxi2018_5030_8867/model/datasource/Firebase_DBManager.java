@@ -2,6 +2,8 @@ package com.gettaxi.benzack.gettaxi2018_5030_8867.model.datasource;
 
 import android.app.Activity;
 import android.os.AsyncTask;
+import android.os.Handler;
+import android.widget.Toast;
 
 import com.gettaxi.benzack.gettaxi2018_5030_8867.model.backend.Backend;
 import com.google.firebase.database.DatabaseReference;
@@ -12,33 +14,26 @@ import java.util.HashMap;
 import javax.microedition.khronos.opengles.GL;
 
 
-public class Firebase_DBManager extends AsyncTask<String, Void, Void> implements Backend {
+public class Firebase_DBManager implements Backend {
     DatabaseReference fireBaseRoot = FirebaseDatabase.getInstance().getReference("Rides");
-
 
 
     @Override
     public void addRide(String destinationLocation, String email, String phone) {
-        //todo-- calculate current location in string! (get locatiob and convert to string)
-        GetCurrentLocation gl = new GetCurrentLocation();
-        String currentLocation = gl.getLocation();
+        //todo-- calculate current location in string! (get location and convert to string)
+
+//        GetCurrentLocation gl = new GetCurrentLocation();
+//        String currentLocation = gl.getLocation();
 
         HashMap<String, String> hm = new HashMap<String, String>();
         //add current location to firebase
-        //todo check why doesnt add two rides. does add one and then bug.
+
         hm.put("Destination ", destinationLocation);
-        hm.put("Current Location",currentLocation);
+//        hm.put("Current Location",currentLocation);
         hm.put("Email ", email);
 
         fireBaseRoot.child(phone).setValue(hm);
 
-    }
-
-
-    @Override//this function makes it asynchrony. (thread working in background)
-    protected Void doInBackground(String... strings) {
-        addRide(strings[0], strings[1], strings[2]);
-        return null;
     }
 
 }

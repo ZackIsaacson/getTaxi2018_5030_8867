@@ -1,6 +1,7 @@
 package com.gettaxi.benzack.gettaxi2018_5030_8867.controller;
 
 import android.app.Activity;
+import android.os.AsyncTask;
 import android.os.Bundle;
 
 import android.view.Gravity;
@@ -16,14 +17,16 @@ import com.gettaxi.benzack.gettaxi2018_5030_8867.model.datasource.Firebase_DBMan
 //import com.google.firebase.database.FirebaseDatabase;
 
 
-public class MainActivity extends Activity implements View.OnClickListener {
+public class MainActivity extends Activity {
+
 
     EditText editTextDestination;
     EditText editTextEmail;
     EditText editTextPhone;
     Button buttonAddRide;
-    BackendFactory b=new BackendFactory();
+    BackendFactory b = new BackendFactory();
     Firebase_DBManager firebase_dbManager;
+    myAsyncTask m = new myAsyncTask();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,7 +35,39 @@ public class MainActivity extends Activity implements View.OnClickListener {
         findViews();
 
 
+    }
 
+    private class myAsyncTask extends AsyncTask<Void, Void, Void> {
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            buttonAddRide.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    try {
+                        firebase_dbManager.addRide(editTextDestination.getText().toString(), editTextEmail.getText().toString()
+                                , editTextPhone.getText().toString());
+                        //execute calls doInBackground (asyncTask) of fireBaseDbManager. which makes the next line asynchrony
+                        // (meaning will not wait for the line to be completed. the thread will be working in the background. uploading to firebase)
+//            firebase_dbManager.execute(editTextDestination.getText().toString(), editTextEmail.getText().toString()
+//                    , editTextPhone.getText().toString());
+                    } catch (Exception e) {
+                        Toast.makeText(getBaseContext(), e.toString(), Toast.LENGTH_LONG);
+                    }
+
+
+                    Toast t = Toast.makeText(getBaseContext(), "succesfully uploaded to firebase", Toast.LENGTH_LONG);
+                    t.setGravity(Gravity.CENTER | Gravity.CENTER, 0, 0);
+                    t.show();
+                    editTextDestination.setText("");
+                    editTextEmail.setText("");
+                    editTextPhone.setText("");
+
+                }
+            });
+
+            return null;
+        }
     }
 
     public void findViews() {
@@ -40,27 +75,10 @@ public class MainActivity extends Activity implements View.OnClickListener {
         editTextEmail = (EditText) findViewById(R.id.editTextEmail);
         editTextPhone = (EditText) findViewById(R.id.editTextPhone);
         buttonAddRide = (Button) findViewById(R.id.buttonAddRide);
-        buttonAddRide.setOnClickListener(this);
-        firebase_dbManager=b.getInstance();
+        firebase_dbManager = b.getInstance();
+
+        m.execute();
     }
 
-    @Override
-    public void onClick(View v) {
-      //  if(v== buttonAddRide)
-
-            //execute calls doInBackground (asyncTask) of fireBaseDbManager. which makes the next line asynchrony
-            // (meaning will not wait for the line to be completed. the thread will be working in the background. uploading to firebase)
-            firebase_dbManager.execute(editTextDestination.getText().toString(),editTextEmail.getText().toString()
-                    ,editTextPhone.getText().toString());
-
-
-
-        Toast t=Toast.makeText(getBaseContext(),"succesfully uploaded to firebase",Toast.LENGTH_LONG);
-        t.setGravity(Gravity.CENTER| Gravity.CENTER,0,0);
-        t.show();
-        editTextDestination.setText("");
-            editTextEmail.setText("");
-            editTextPhone.setText("");
-    }
 }
 
