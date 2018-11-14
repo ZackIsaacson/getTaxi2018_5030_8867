@@ -1,6 +1,6 @@
 
 package com.gettaxi.benzack.gettaxi2018_5030_8867.model.datasource;
-/*
+
 import android.app.Activity;
 import android.os.Bundle;
 
@@ -65,25 +65,25 @@ public class helpLocation extends Activity implements View.OnClickListener {
 
 
     private void findViews() {
-       ClientPlus cp=new ClientPlus("ben", "054", "@jct.","3144");
-        Client c = new Client("ben", "054", "@jct.");
-        DatabaseReference root = FirebaseDatabase.getInstance().getReference("Clients");
-        root.child(cp.getId()).setValue(cp);
-        int i=0;
-        for (; i < 4; i++) {
-            root.child("" + i).setValue(c).addOnSuccessListener(new OnSuccessListener<Void>() {
-                @Override
-                public void onSuccess(Void aVoid) {
-                    Toast.makeText(getBaseContext(), "succesfully uploaded user to firebase", Toast.LENGTH_LONG).show();
-                }
-            }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    Toast t = Toast.makeText(getBaseContext(), "unsuccessful", Toast.LENGTH_LONG);
-                    t.setGravity(1, 50, 50);
-                }
-            });
-        }
+//       ClientPlus cp=new ClientPlus("ben", "054", "@jct.","3144");
+//        Client c = new Client("ben", "054", "@jct.");
+//        DatabaseReference root = FirebaseDatabase.getInstance().getReference("Clients");
+//        root.child(cp.getId()).setValue(cp);
+//        int i=0;
+//        for (; i < 4; i++) {
+//            root.child("" + i).setValue(c).addOnSuccessListener(new OnSuccessListener<Void>() {
+//                @Override
+//                public void onSuccess(Void aVoid) {
+//                    Toast.makeText(getBaseContext(), "succesfully uploaded user to firebase", Toast.LENGTH_LONG).show();
+//                }
+//            }).addOnFailureListener(new OnFailureListener() {
+//                @Override
+//                public void onFailure(@NonNull Exception e) {
+//                    Toast t = Toast.makeText(getBaseContext(), "unsuccessful", Toast.LENGTH_LONG);
+//                    t.setGravity(1, 50, 50);
+//                }
+//            });
+//        }
 
 //Ride rideTry=new Ride();
 //root.child(rideTry.getTheClient().PhoneNumberToString()).setValue(rideTry);
@@ -105,7 +105,7 @@ public class helpLocation extends Activity implements View.OnClickListener {
         searchButton = (Button) findViewById(R.id.searchButton);
         searchButton.setOnClickListener(this);
         trySpinner = (Spinner) findViewById(R.id.trySpinner);
-        TextView smallWordTV = (TextView) findViewById(R.id.smallWordTextView);
+//        TextView smallWordTV = (TextView) findViewById(R.id.smallWordTextView);
 
 
         ArrayAdapter<ClientRequestStatus> spinnerAdapter = new ArrayAdapter<ClientRequestStatus>
@@ -276,4 +276,3 @@ public class helpLocation extends Activity implements View.OnClickListener {
     }
 }
 
-*/

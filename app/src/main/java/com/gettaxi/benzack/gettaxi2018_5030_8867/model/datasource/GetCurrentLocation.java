@@ -3,6 +3,7 @@ package com.gettaxi.benzack.gettaxi2018_5030_8867.model.datasource;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.Application;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.location.Address;
@@ -13,22 +14,66 @@ import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.widget.Toast;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
 
-public class GetCurrentLocation extends Activity {
+public class GetCurrentLocation {
 
+    Context usingOthersContext;
     // Acquire a reference to the system Location Manager
     LocationManager locationManager;
     // Define a listener that responds to location updates
     LocationListener locationListener;
-    String loc = null;
-    //turns Location into string
+    String loc;
+    Location listenedLocation;
+
+    GetCurrentLocation(Context c) throws Exception {
+        loc=null;
+        usingOthersContext = c;
+        locationManager = (LocationManager) usingOthersContext.getSystemService(Context.LOCATION_SERVICE);
+        //  locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+
+        // Define a listener that responds to location updates
+        locationListener = new LocationListener() {
+            public void onLocationChanged(Location location) {
+                listenedLocation = location;
+                loc = getPlace(listenedLocation);
+                locationManager.removeUpdates(locationListener);
+            }
+
+            public void onStatusChanged(String provider, int status, Bundle extras) {
+            }
+
+            public void onProviderEnabled(String provider) {
+            }
+
+            public void onProviderDisabled(String provider) {
+            }
+        };
+        if (ActivityCompat.checkSelfPermission(usingOthersContext, Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(usingOthersContext, Manifest.permission.ACCESS_COARSE_LOCATION)
+                        != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            throw new Exception("no permission for location!");
+        }
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
+
+    }
+
+    //turns Location into string  (location.toString();
     public String getPlace(Location location) {
-        Geocoder geocoder = new Geocoder(this, Locale.getDefault());
+        Geocoder geocoder = new Geocoder(usingOthersContext, Locale.getDefault());
         List<Address> addresses = null;
         try {
             addresses = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
@@ -48,54 +93,34 @@ public class GetCurrentLocation extends Activity {
         return "IOException ...";
     }
 
+
     public String getLocation() {
-        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        // Define a listener that responds to location updates
+        return loc;
+    }
+}
+/*
+    public String getLocation() {
 
-        locationListener = new LocationListener() {
-            public void onLocationChanged(Location location) {
-
-                //         showSunTimes(location.getLatitude(), location.getLongitude()); /// ...
-                // Called when a new location is found by the network location provider.
-                //    Toast.makeText(getBaseContext(), location.toString(), Toast.LENGTH_LONG).show();
-                //TODO- get the tet and jus put in variable
-                loc = getPlace(location);
-                //      locationTextView.setText(getPlace(location));////location.toString());
-
-                // Remove the listener you previously added
-                //todo- if only want a one time check i think remove
-                locationManager.removeUpdates(locationListener);
-            }
-
-            public void onStatusChanged(String provider, int status, Bundle extras) {
-            }
-
-            public void onProviderEnabled(String provider) {
-            }
-
-            public void onProviderDisabled(String provider) {
-            }
-        };
         //     Check the SDK version and whether the permission is already granted or not.
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
-
-                checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED)
-
-        {
+ /*       if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
+                checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 5);
-
             //activates the listener
         } else {
             // Android version is lesser than 6.0 or the permission is already granted.
+*/
 
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
 
-            return loc;  //if permission granted, return loc. if not return null
-        }
-        return null;
-    }
+// Location l= locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 
-    @SuppressLint("MissingPermission")
+
+//  locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+//  locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
+//  return "loc" + loc;  //if permission granted, return loc. if not return null
+//    }
+//}
+
+ /*   @SuppressLint("MissingPermission")
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         if (requestCode == 5) {
@@ -110,5 +135,6 @@ public class GetCurrentLocation extends Activity {
         }
 
     }
-}
+    */
+
 

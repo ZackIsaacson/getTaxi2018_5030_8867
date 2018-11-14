@@ -1,5 +1,6 @@
 package com.gettaxi.benzack.gettaxi2018_5030_8867.model.backend;
 
+import android.content.Context;
 import android.os.AsyncTask;
 
 import com.gettaxi.benzack.gettaxi2018_5030_8867.model.datasource.Firebase_DBManager;
@@ -12,9 +13,9 @@ public class BackendFactory {
         return ourInstance;
     }
 
-    public BackendFactory() {
+    public BackendFactory(Context mContext)throws Exception {
         if (ourInstance == null)
-            ourInstance = new Firebase_DBManager();
+            ourInstance = new Firebase_DBManager(mContext);
     }
 
 

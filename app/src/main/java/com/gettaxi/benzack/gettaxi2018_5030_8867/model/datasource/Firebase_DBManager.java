@@ -1,7 +1,9 @@
 package com.gettaxi.benzack.gettaxi2018_5030_8867.model.datasource;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.AsyncTask;
+import android.os.Bundle;
 import android.os.Handler;
 import android.widget.Toast;
 
@@ -15,14 +17,20 @@ import javax.microedition.khronos.opengles.GL;
 
 
 public class Firebase_DBManager implements Backend {
-    DatabaseReference fireBaseRoot = FirebaseDatabase.getInstance().getReference("Rides");
-
-
+    Context mContext;
+    DatabaseReference fireBaseRoot;
+    GetCurrentLocation gl;
+    ///todo dont want firebase to be public, so that cant creat it. only backend can.
+    public Firebase_DBManager(Context c)throws Exception
+    {
+        mContext=c;
+        fireBaseRoot = FirebaseDatabase.getInstance().getReference("Rides");
+         gl = new GetCurrentLocation(mContext);
+    }
     @Override
     public void addRide(String destinationLocation, String email, String phone) {
         //todo-- calculate current location in string! (get location and convert to string)
 
-        GetCurrentLocation gl = new GetCurrentLocation();
         String currentLocation = gl.getLocation();
 
         HashMap<String, String> hm = new HashMap<String, String>();

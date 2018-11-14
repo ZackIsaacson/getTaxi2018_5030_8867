@@ -1,6 +1,8 @@
 package com.gettaxi.benzack.gettaxi2018_5030_8867.model.backend;
 
+import android.content.Context;
+
 public interface Backend {
-    public void addRide(String destinationLoaction, String email,String phone);
+    public void addRide(String destinationLoaction, String email, String phone);
 
 }
