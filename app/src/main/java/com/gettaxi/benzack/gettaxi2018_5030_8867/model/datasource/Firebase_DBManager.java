@@ -20,24 +20,21 @@ public class Firebase_DBManager implements Backend {
     Context mContext;
     DatabaseReference fireBaseRoot;
     GetCurrentLocation gl;
-    ///todo dont want firebase to be public, so that cant creat it. only backend can.
-    public Firebase_DBManager(Context c)throws Exception
-    {
-        mContext=c;
-        fireBaseRoot = FirebaseDatabase.getInstance().getReference("Rides");
-         gl = new GetCurrentLocation(mContext);
-    }
-    @Override
-    public void addRide(String destinationLocation, String email, String phone) {
-        //todo-- calculate current location in string! (get location and convert to string)
 
-        String currentLocation = gl.getLocation();
+    ///todo dont want firebase to be public, so that cant creat it. only backend can.
+    public Firebase_DBManager() {
+        fireBaseRoot = FirebaseDatabase.getInstance().getReference("Rides");
+    }
+
+    @Override
+    public void addRide(String currentLocation, String destinationLocation, String email, String phone) {
+        //todo-- calculate current location in string! (get location and convert to string)
+//        String currentLocation = gl.getLocation();
 
         HashMap<String, String> hm = new HashMap<String, String>();
         //add current location to firebase
-
+        hm.put("Current Location", currentLocation);
         hm.put("Destination ", destinationLocation);
-        hm.put("Current Location",currentLocation);
         hm.put("Email ", email);
 
         fireBaseRoot.child(phone).setValue(hm);

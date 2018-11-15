@@ -13,9 +13,9 @@ public class BackendFactory {
         return ourInstance;
     }
 
-    public BackendFactory(Context mContext)throws Exception {
+    public BackendFactory(){
         if (ourInstance == null)
-            ourInstance = new Firebase_DBManager(mContext);
+            ourInstance = new Firebase_DBManager();
     }
 
 

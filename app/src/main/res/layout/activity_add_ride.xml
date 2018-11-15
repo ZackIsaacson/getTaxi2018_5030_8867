@@ -3,7 +3,33 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
+    <!--
+           <EditText
+               android:id="@+id/editTextDestination"
+               android:layout_width="match_parent"
+               android:layout_height="wrap_content"
+               android:hint="Enter Destination" />
+           -->
+    <!--
+<RelativeLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    >
+    <TextView
+        android:id="@+id/textViewDestination"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Desination" />
 
+    <fragment
+        android:id="@+id/place_autocomplete_fragment"
+        android:name="com.google.android.gms.location.places.ui.PlaceAutocompleteFragment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignRight="@+id/textViewDestination" />
+
+</RelativeLayout>
+    -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -15,18 +41,12 @@
             android:layout_height="wrap_content"
             android:text="Desination" />
 
-        <EditText
-            android:id="@+id/editTextDestination"
+        <fragment
+            android:id="@+id/place_autocomplete_fragment"
+            android:name="com.google.android.gms.location.places.ui.PlaceAutocompleteFragment"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Enter Destination" />
-        <!--
-                <fragment
-                    android:id="@+id/place_autocomplete_fragment"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:name="com.google.android.gms.location.places.ui.PlaceAutocompleteFragment"/>
-        -->
+            android:layout_height="wrap_content" />
+
     </LinearLayout>
 
     <LinearLayout
@@ -44,7 +64,7 @@
             android:id="@+id/editTextPhone"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="enter Phone number"
+            android:hint="Enter Phone number..."
             android:inputType="phone" />
 
     </LinearLayout>
@@ -64,7 +84,8 @@
             android:id="@+id/editTextEmail"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Enter Email Address" />
+            android:hint="Enter Email Address..."
+            android:inputType="textEmailAddress"/>
     </LinearLayout>
 
     <Button
