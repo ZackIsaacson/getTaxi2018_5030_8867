@@ -5,9 +5,12 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.widget.Toast;
 
 import com.gettaxi.benzack.gettaxi2018_5030_8867.model.backend.Backend;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -18,27 +21,45 @@ import javax.microedition.khronos.opengles.GL;
 
 public class Firebase_DBManager implements Backend {
     Context mContext;
-    DatabaseReference fireBaseRoot;
-    GetCurrentLocation gl;
+    static DatabaseReference fireBaseRoot;
+    String uploadAction;
 
-    ///todo dont want firebase to be public, so that cant creat it. only backend can.
-    public Firebase_DBManager() {
+//    public abstract static class asyncUploadToDataBase extends AsyncTask<Void, Void, Void>{
+//        abstract public void doInBackground();
+//    }
+
+    /*for driver add interface to see if succesful upload of pics etc or not
+    interface action
+    {
+        public void onSuccess();
+        public void onProgress();
+        public void onFailure();
+    }*/
+    static {
         fireBaseRoot = FirebaseDatabase.getInstance().getReference("Rides");
     }
 
+    //either can return string if succesful or not or gets a interface of fbAction and return there. for now simple return.
     @Override
-    public void addRide(String currentLocation, String destinationLocation, String email, String phone) {
-        //todo-- calculate current location in string! (get location and convert to string)
-//        String currentLocation = gl.getLocation();
-
+    public String addRide(String currentLocation, String destinationLocation, String email, String phone) {
         HashMap<String, String> hm = new HashMap<String, String>();
         //add current location to firebase
         hm.put("Current Location", currentLocation);
         hm.put("Destination ", destinationLocation);
         hm.put("Email ", email);
-
-        fireBaseRoot.child(phone).setValue(hm);
-
+        uploadAction = "";
+        fireBaseRoot.child(phone).setValue(hm).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                uploadAction = "Successful upload to firebase";
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                uploadAction = "Unsuccesful upload to firebase";
+            }
+        });
+        return uploadAction;
     }
 
 }

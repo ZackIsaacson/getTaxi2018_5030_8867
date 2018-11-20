@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">getTaxi2018_5030_8867</string>
+    <string name="promptSpinner">Choose method..</string>
 </resources>

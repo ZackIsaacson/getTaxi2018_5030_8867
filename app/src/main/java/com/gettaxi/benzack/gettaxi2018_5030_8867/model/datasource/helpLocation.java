@@ -228,7 +228,7 @@ public class helpLocation extends Activity implements View.OnClickListener {
             getLocationButton.setEnabled(true);
         }
         if (v == distanceButton) {
-           // startActivity(new Intent(this, DistanceActivity.class));
+            // startActivity(new Intent(this, DistanceActivity.class));
         }
 
         if (v == searchButton) {
@@ -262,7 +262,6 @@ public class helpLocation extends Activity implements View.OnClickListener {
 
 
                 Toast.makeText(this, toastMsg, Toast.LENGTH_LONG).show();
-
 
             }
         }
