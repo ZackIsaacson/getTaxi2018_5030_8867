@@ -9,6 +9,7 @@ import android.support.annotation.NonNull;
 import android.widget.Toast;
 
 import com.gettaxi.benzack.gettaxi2018_5030_8867.model.backend.Backend;
+import com.gettaxi.benzack.gettaxi2018_5030_8867.model.entities.Driver;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DatabaseReference;
@@ -18,49 +19,38 @@ import java.util.HashMap;
 
 import javax.microedition.khronos.opengles.GL;
 
+import static java.lang.Thread.sleep;
 
+//todo add the rest of the ride to firebase.
 public class Firebase_DBManager implements Backend {
-    Context mContext;
-    static DatabaseReference fireBaseRoot;
-    String uploadAction;
+    static DatabaseReference fireBaseRidesRoot;
 
-//    public abstract static class asyncUploadToDataBase extends AsyncTask<Void, Void, Void>{
-//        abstract public void doInBackground();
-//    }
-
-    /*for driver add interface to see if succesful upload of pics etc or not
-    interface action
-    {
-        public void onSuccess();
-        public void onProgress();
-        public void onFailure();
-    }*/
     static {
-        fireBaseRoot = FirebaseDatabase.getInstance().getReference("Rides");
+        fireBaseRidesRoot = FirebaseDatabase.getInstance().getReference("Rides");
     }
 
-    //either can return string if succesful or not or gets a interface of fbAction and return there. for now simple return.
     @Override
-    public String addRide(String currentLocation, String destinationLocation, String email, String phone) {
+    public void addRide(String currentLocation, String destinationLocation, String email, final String phone, final Action action) {
         HashMap<String, String> hm = new HashMap<String, String>();
         //add current location to firebase
         hm.put("Current Location", currentLocation);
         hm.put("Destination ", destinationLocation);
         hm.put("Email ", email);
-        uploadAction = "";
-        fireBaseRoot.child(phone).setValue(hm).addOnSuccessListener(new OnSuccessListener<Void>() {
+
+        fireBaseRidesRoot.child(phone).setValue(hm).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
-                uploadAction = "Successful upload to firebase";
+                action.onSuccess("Phone number " + phone + " succesfully requested getTaxi. A driver will contact you ASAP!");
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                uploadAction = "Unsuccesful upload to firebase";
+                action.onFailure("Phone number " +phone + " unsuccesfully requested getTaxi. Sorry! Please try again");
             }
         });
-        return uploadAction;
+
     }
+
 
 }
 

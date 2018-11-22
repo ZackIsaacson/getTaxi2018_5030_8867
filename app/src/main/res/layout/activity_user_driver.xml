@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/ny_first_activty"
+   >
+<TextView
+    android:layout_marginTop="40dp"
+    android:textSize="30dp"
+    android:textStyle="bold"
+    android:gravity="center"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:text="Welcome To Gettaxi!"/>
+    <Button
+        android:id="@+id/buttonUser"
+        android:textColor="#fff"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="User"
+     android:layout_alignParentLeft="true"
+        android:layout_marginLeft="100dp"
+        android:layout_marginRight="100dp"
+        android:layout_marginTop="100dp"
+        android:background="#80000000"
+        />
+
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="100dp"
+        android:layout_marginRight="100dp"
+        android:id="@+id/buttonDriver"
+        android:layout_marginTop="190dp"
+        android:background="#80000000"
+        android:text="Driver"
+        android:textColor="#fff" />
+</RelativeLayout>

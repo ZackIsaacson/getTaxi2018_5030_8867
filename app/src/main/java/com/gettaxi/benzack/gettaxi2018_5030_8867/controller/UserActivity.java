@@ -1,55 +1,5 @@
 package com.gettaxi.benzack.gettaxi2018_5030_8867.controller;
 
-
-import android.app.Activity;
-import android.content.Intent;
-import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.view.View;
-import android.widget.Button;
-
-import com.gettaxi.benzack.gettaxi2018_5030_8867.R;
-
-public class MainActivity extends Activity {
-
-    Button buttonUser;
-    Button butonDriver;
-
-    @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_user_driver);
-        findViews();
-    }
-
-    public void findViews() {
-        buttonUser = (Button)findViewById(R.id.buttonUser);
-        buttonUser.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent userIntent = new Intent(MainActivity.this, UserActivity.class);
-                startActivity(userIntent);
-            }
-        });
-        butonDriver = (Button)findViewById(R.id.buttonDriver);
-        butonDriver.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent driverIntent = new Intent(MainActivity.this, DriverSignInActivty.class);
-                startActivity(driverIntent);
-            }
-        });
-
-
-    }
-
-
-}
-
-/*
-package com.gettaxi.benzack.gettaxi2018_5030_8867.controller;
-
-
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -57,7 +7,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Address;
-import android.location.Criteria;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
@@ -65,20 +14,15 @@ import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.NotificationCompatSideChannelService;
-import android.telephony.PhoneNumberUtils;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
+import android.widget.ImageButton;
 import android.widget.Spinner;
-import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -89,7 +33,6 @@ import com.gettaxi.benzack.gettaxi2018_5030_8867.model.datasource.Firebase_DBMan
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.common.api.Status;
-import com.google.android.gms.location.places.AutocompleteFilter;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
 import com.google.android.gms.location.places.ui.PlacePicker;
@@ -99,12 +42,10 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
 
-import static android.content.ContentValues.TAG;
-//import com.google.firebase.database.DatabaseReference;
-//import com.google.firebase.database.FirebaseDatabase;
-
 //1.todo singleton ok?
-public class MainActivity extends Activity {
+//2.todo works on emualtor (build.version), on phone because skips write over permission check never allowa location and returns null. ask ezra.
+//polymorphic
+public class UserActivity extends Activity {
 
     private enum Provider {GPS, NETWORK, NO_Provider}
 
@@ -114,7 +55,7 @@ public class MainActivity extends Activity {
     final int PLACE_PICKER_REQUEST = 1;
     EditText editTextEmail;
     EditText editTextPhone;
-    Button buttonAddRide;
+    ImageButton buttonAddRide;
     BackendFactory b = new BackendFactory();
     ;
     Backend backendImplemntation;
@@ -122,13 +63,14 @@ public class MainActivity extends Activity {
     LocationManager locationManager;
     LocationListener locationListener;
     String currentLocationString, destinationLocationString;
-    myAsyncTask m = new myAsyncTask();
+    //todo    myAsyncTask m = new myAsyncTask();
     PlaceAutocompleteFragment autocompleteFragment;
     Location destinationLocation, currentDestination;
     Spinner spinnerStartLocation;
     TextView textViewSpinnerChoice;
     Location locationGPS;
     Location locationNetwork;
+    Backend.BackendUploadAsyncTask backendUploadAsyncTask;
 
 
     @Override
@@ -137,18 +79,19 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_add_ride);
         findViews();
         getLastLoc();
-
-        m.execute();
+        clickButtonToAddRide();      //todo  m.execute();
+   //     backendUploadAsyncTask.execute();
     }
 
     int a;
 
     public void findViews() {
-        locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+        locationManager = (LocationManager) this.getSystemService(LOCATION_SERVICE);
         locationListener = new LocationListener() {
             @Override
             public void onLocationChanged(Location location) {
-                currentDestination = location;
+                a = 2;
+                //currentDestination = location;
 
             }
 
@@ -169,12 +112,12 @@ public class MainActivity extends Activity {
 
         };
         getCurrentLocation(Provider.GPS);  //because asynchrony getting the lastknownlocation up to date.
-        getCurrentLocation(Provider.NETWORK);
+        //    getCurrentLocation(Provider.NETWORK);
         //  editTextDestination = (EditText) findViewById(R.id.editTextDestination);
         textViewSpinnerChoice = (TextView) findViewById(R.id.textViewspinnerChoice);
         editTextEmail = (EditText) findViewById(R.id.editTextEmail);
-        editTextPhone = (EditText) findViewById(R.id.editTextPhone);
-        buttonAddRide = (Button) findViewById(R.id.buttonAddRide);
+        editTextPhone = (EditText) findViewById(R.id.editTextRidePhone);
+        buttonAddRide = (ImageButton) findViewById(R.id.buttonAddRide);
         spinnerStartLocation = (Spinner) findViewById(R.id.spinnerStartLocation);
 
 
@@ -208,15 +151,15 @@ public class MainActivity extends Activity {
                 String selectedItem = parent.getSelectedItem().toString();
                 switch (selectedItem) {
                     case "Current Location": {
-                        Location temp=getLastLoc();
-                      //todo  Location temp = getCurrentLocation(Provider.GPS);
+                        Location temp = getLastLoc();
+                        //todo  Location temp = getCurrentLocation(Provider.GPS);
                         if (temp == null) {
                             checkCurrLoc = false;
                             textViewSpinnerChoice.setText("GPS and network unavailable to find current location");
                         } else {
                             checkCurrLoc = true;
                             textViewSpinnerChoice.setText(getPlace(temp));
-                          //todo  textViewSpinnerChoice.setText(getPlace(getCurrentLocation(Provider.GPS)));
+                            //todo  textViewSpinnerChoice.setText(getPlace(getCurrentLocation(Provider.GPS)));
                         }
                         spinnerChoice = 1;
                         break;
@@ -231,7 +174,7 @@ public class MainActivity extends Activity {
                         checkCurrLoc = false;
 
                         try {
-                            startActivityForResult(builder.build(MainActivity.this), PLACE_PICKER_REQUEST);
+                            startActivityForResult(builder.build(UserActivity.this), PLACE_PICKER_REQUEST);
                         } catch (GooglePlayServicesRepairableException e) {
                             e.printStackTrace();
                         } catch (GooglePlayServicesNotAvailableException e) {
@@ -255,7 +198,11 @@ public class MainActivity extends Activity {
         if (requestCode == PLACE_PICKER_REQUEST) {
             if (resultCode == RESULT_OK) {
                 Place place = PlacePicker.getPlace(data, this);
-                textViewSpinnerChoice.setText(place.getName());
+                Location temp = new Location("A");
+                temp.setLatitude(place.getLatLng().latitude);
+                temp.setLongitude(place.getLatLng().longitude);
+
+                textViewSpinnerChoice.setText(getPlace(temp));
                 checkCurrLoc = true;
                 String toastMsg = String.format("Place: %s", place.getName());
                 Toast.makeText(this, toastMsg, Toast.LENGTH_LONG).show();
@@ -263,52 +210,142 @@ public class MainActivity extends Activity {
         }
     }
 
-    private class myAsyncTask extends AsyncTask<Void, Void, Void> {
-        @Override
-        protected Void doInBackground(Void... voids) {
+    //todo move myAsyncTask here and execute to this. again so that driver, user and all others use the same interface. backenduploadAsyncTask.
+    public void clickButtonToAddRide() {
+        backendUploadAsyncTask = new Backend.BackendUploadAsyncTask() {
+            @Override
+            public Void doInBackground(Void... voids) {
+                backendImplemntation = b.getInstance();
+                buttonAddRide.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        try {
+                            checkInput();
+                            if (spinnerChoice == 1) {
+                                //might be more accurate location, thats why checking again. might be null. solving that in checkinput
+                                Location temp = getLastLoc();
+                                if (temp != null)
+                                    currentLocationString = getPlace(temp);
+                                else
+                                    currentLocationString = null;
+                                //todo currentLocationString = getPlace(getCurrentLocation(Provider.GPS));
+                            } else if (spinnerChoice == 3) {
+                                currentLocationString = textViewSpinnerChoice.getText().toString();
+                            }
 
-            backendImplemntation = b.getInstance();
+                            destinationLocationString = getPlace(destinationLocation);
+                            backendImplemntation.addRide(currentLocationString, destinationLocationString, editTextEmail.getText().toString()
+                                    , editTextPhone.getText().toString(), new Backend.Action() {
+                                        @Override
+                                        public void onSuccess(String act) {
+                                            Toast showUserUpload = Toast.makeText(getBaseContext(), act, Toast.LENGTH_LONG);
+                                            showUserUpload.setGravity(Gravity.CENTER | Gravity.CENTER, 0, 0);
+                                            showUserUpload.show();
+                                        }
 
-            buttonAddRide.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    try {
-                        checkInput();
-                        Toast showUserUpload;
-                        if (spinnerChoice == 1) {
-                            //might be more accurate location, thats why checking again. might be null. solving that in checkinput
-                            currentLocationString = getPlace(getLastLoc());
-                           //todo currentLocationString = getPlace(getCurrentLocation(Provider.GPS));
-                        } else if (spinnerChoice == 3) {
-                            currentLocationString = textViewSpinnerChoice.getText().toString();
+                                        @Override
+                                        public void onProgress(String act) {
+
+                                        }
+
+                                        @Override
+                                        public void onFailure(String act) {
+                                            Toast showUserUpload = Toast.makeText(getBaseContext(), act, Toast.LENGTH_LONG);
+                                            showUserUpload.setGravity(Gravity.CENTER | Gravity.CENTER, 0, 0);
+                                            showUserUpload.show();
+                                        }
+                                    });
+
+
+                            autocompleteFragment.setText("");
+                            editTextEmail.setText("");
+                            editTextPhone.setText("");
+
+                            //currentLocationString = getPlace(getLastKnownLocation());
+                            //    curretLocationString=getPlace(locationManager.getLastKnownLocation(locationManager.GPS_PROVIDER));
+
+                        } catch (Exception e) {
+                            Toast.makeText(getBaseContext(), e.getMessage(), Toast.LENGTH_LONG).show();
                         }
 
-                        destinationLocationString = getPlace(destinationLocation);
-                        String actionUpload = backendImplemntation.addRide(currentLocationString, destinationLocationString, editTextEmail.getText().toString()
-                                , editTextPhone.getText().toString());
-                        showUserUpload = Toast.makeText(getBaseContext(), actionUpload, Toast.LENGTH_LONG);
-                        showUserUpload.setGravity(Gravity.CENTER | Gravity.CENTER, 0, 0);
-                        showUserUpload.show();
-
-                        autocompleteFragment.setText("");
-                        editTextEmail.setText("");
-                        editTextPhone.setText("");
-
-                        //currentLocationString = getPlace(getLastKnownLocation());
-                        //    curretLocationString=getPlace(locationManager.getLastKnownLocation(locationManager.GPS_PROVIDER));
-
-                    } catch (Exception e) {
-                        Toast.makeText(getBaseContext(), e.getMessage(), Toast.LENGTH_LONG).show();
                     }
+                });
 
-                }
-            });
+                return null;
+            }
 
-            return null;
-        }
+        };
+        backendUploadAsyncTask.execute();
 
     }
 
+    /*
+        private class myAsyncTask extends AsyncTask<Void, Void, Void> {
+            @Override
+            protected Void doInBackground(Void... voids) {
+
+                backendImplemntation = b.getInstance();
+
+                buttonAddRide.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        try {
+                            checkInput();
+                            if (spinnerChoice == 1) {
+                                //might be more accurate location, thats why checking again. might be null. solving that in checkinput
+                                Location temp = getLastLoc();
+                                if (temp != null)
+                                    currentLocationString = getPlace(temp);
+                                else
+                                    currentLocationString = null;
+                                //todo currentLocationString = getPlace(getCurrentLocation(Provider.GPS));
+                            } else if (spinnerChoice == 3) {
+                                currentLocationString = textViewSpinnerChoice.getText().toString();
+                            }
+
+                            destinationLocationString = getPlace(destinationLocation);
+                            backendImplemntation.addRide(currentLocationString, destinationLocationString, editTextEmail.getText().toString()
+                                    , editTextPhone.getText().toString(), new Backend.Action() {
+                                        @Override
+                                        public void onSuccess(String act) {
+                                            Toast showUserUpload = Toast.makeText(getBaseContext(), act, Toast.LENGTH_LONG);
+                                            showUserUpload.setGravity(Gravity.CENTER | Gravity.CENTER, 0, 0);
+                                            showUserUpload.show();
+                                        }
+
+                                        @Override
+                                        public void onProgress(String act) {
+
+                                        }
+
+                                        @Override
+                                        public void onFailure(String act) {
+                                            Toast showUserUpload = Toast.makeText(getBaseContext(), act, Toast.LENGTH_LONG);
+                                            showUserUpload.setGravity(Gravity.CENTER | Gravity.CENTER, 0, 0);
+                                            showUserUpload.show();
+                                        }
+                                    });
+
+
+                            autocompleteFragment.setText("");
+                            editTextEmail.setText("");
+                            editTextPhone.setText("");
+
+                            //currentLocationString = getPlace(getLastKnownLocation());
+                            //    curretLocationString=getPlace(locationManager.getLastKnownLocation(locationManager.GPS_PROVIDER));
+
+                        } catch (Exception e) {
+                            Toast.makeText(getBaseContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+                        }
+
+                    }
+                });
+
+                return null;
+            }
+
+        }
+    */
     //checks if email input is valid.
     public final static boolean isValidEmail(String email) {
         if (email == null)
@@ -345,7 +382,7 @@ public class MainActivity extends Activity {
 //    todo when gps or network not enabled, doesnt work.
 //    todo hasAccuaracy isnt working. change function. changed.
 //    todo sometimes when uploading to firebase, doesnt show the toast, only empty toast. null.
-    public Location getCurrentLocation(Provider provider) {
+    public void getCurrentLocation(Provider provider) {
 
         //                && ActivityCompat.checkSelfPermission(getBaseContext(), android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 //        if (ActivityCompat.checkSelfPermission(getBaseContext(), android.Manifest.permission.ACCESS_FINE_LOCATION)
@@ -355,21 +392,24 @@ public class MainActivity extends Activity {
         if (provider == Provider.GPS) {  //gps usually more accurate.
             //if needs permission and check if has..
             //phones api>= 23 (my phone is 21 and thereforealways returns false. doesnt ask for permission)
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                    //if no permission for gps, ask for permission (gps is more accurate then network)
-                    requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 5);
-                }
+            if (ActivityCompat.checkSelfPermission(getBaseContext(), android.Manifest.permission.ACCESS_FINE_LOCATION)
+                    != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(UserActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
+//                    checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+//                requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 5);
+
             } else {   //has permission for gps or doesnt need.
-                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
-                locationGPS = locationManager.getLastKnownLocation(locationManager.GPS_PROVIDER);
-                if (locationGPS != null)
-                    return locationGPS;
-                else  //if has permission for gps but indoors or cant reach signal. has to use network.
-                    provider = Provider.NETWORK;
+                if (locationManager.isProviderEnabled(locationManager.GPS_PROVIDER))
+                    locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
+//                locationGPS = locationManager.getLastKnownLocation(locationManager.GPS_PROVIDER);
+//                if (locationGPS != null)
+//                    return locationGPS;
+//                else  //if has permission for gps but indoors or cant reach signal. has to use network.
+//                    provider = Provider.NETWORK;
             }
         }
-
+/*
         if (provider == Provider.NETWORK) {
 
             //check if needs permission and if does need, if has permission
@@ -378,31 +418,37 @@ public class MainActivity extends Activity {
                 requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 6);
             } else { //if doesnt need or has permission (when gps not available). get location from network
                 locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
-                locationNetwork = locationManager.getLastKnownLocation(locationManager.NETWORK_PROVIDER);
-                if (locationNetwork != null)  //has permission for both but gps not working network yes working. return network
-                    return locationNetwork;
-                else
-                    provider = Provider.NO_Provider;
+     //todo           locationNetwork = locationManager.getLastKnownLocation(locationManager.NETWORK_PROVIDER);
+//                if (locationNetwork != null)  //has permission for both but gps not working network yes working. return network
+//                    return locationNetwork;
+//                else
+//                    provider = Provider.NO_Provider;
             }
         }                //(provider == Provider.NO_Provider)
-        return null;
+//        return null;
+
+    */
     }
-public Location getLastLoc()
-{Location loc;
-    if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-        // TODO: Consider calling
-        //    ActivityCompat#requestPermissions
-        // here to request the missing permissions, and then overriding
-        //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-        //                                          int[] grantResults)
-        // to handle the case where the user grants the permission. See the documentation
-        // for ActivityCompat#requestPermissions for more details.
-        return null;
+
+    public Location getLastLoc() {
+        Location loc;
+
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return null;
+        }
+        loc = locationManager.getLastKnownLocation(locationManager.GPS_PROVIDER);
+//        if (loc == null)
+//     todo       loc = locationManager.getLastKnownLocation(locationManager.NETWORK_PROVIDER);
+        return loc;
     }
-    loc = locationManager.getLastKnownLocation(locationManager.GPS_PROVIDER);
-    String s=getPlace(loc);
-    return loc;
-}
 
     //if didnt have permission, tried getting permission. coming back from requestPermissions here.
     @SuppressLint("MissingPermission")
@@ -438,7 +484,7 @@ public Location getLastLoc()
                     //  String countryName = addresses.get(0).getAddressLine(2);
                     i++;
                 }
-                return  address + "\n";
+                return /*stateName + "\n" +*/ address + "\n"/* + countryName*/;
             }
             return "no place: \n (" + location.getLongitude() + " , " + location.getLatitude() + ")";
         } catch (IOException e) {
